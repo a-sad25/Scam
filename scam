@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Just One Question 💖</title>
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: 'Segoe UI', cursive;
+    }
+
+    body {
+        margin: 0;
+        height: 100vh;
+        background: linear-gradient(135deg, #ff758c, #ff7eb3);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        color: white;
+    }
+
+    .container {
+        text-align: center;
+        position: relative;
+    }
+
+    h1 {
+        font-size: 2.4rem;
+        margin-bottom: 40px;
+        text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .buttons {
+        position: relative;
+        height: 120px;
+    }
+
+    button {
+        padding: 14px 36px;
+        font-size: 1.1rem;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s ease;
+        position: absolute;
+    }
+
+    #yes {
+        left: 50%;
+        transform: translateX(-50%);
+        background: #fff;
+        color: #ff4f7b;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    #yes:hover {
+        transform: translateX(-50%) scale(1.05);
+    }
+
+    #no {
+        background: #ffdde1;
+        color: #ff4f7b;
+        left: 65%;
+        top: 60px;
+    }
+
+    .message {
+        display: none;
+        font-size: 3rem;
+        margin-top: 20px;
+        animation: pop 0.6s ease forwards;
+    }
+
+    @keyframes pop {
+        0% { transform: scale(0.6); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+
+    .heart {
+        position: absolute;
+        color: rgba(255,255,255,0.7);
+        font-size: 20px;
+        animation: float 6s linear infinite;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(100vh) scale(0.8); opacity: 0; }
+        50% { opacity: 1; }
+        100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Are you the most beautiful person in existence? 💕</h1>
+
+    <div class="buttons">
+        <button id="yes">Yes 💖</button>
+        <button id="no">No 🙃</button>
+    </div>
+
+    <div class="message" id="message">You must be Wageesha the Cutie Patootie 💘</div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+    // Floating hearts
+    for (let i = 0; i < 20; i++) {
+        let heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerHTML = "❤️";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDelay = Math.random() * 6 + "s";
+        heart.style.fontSize = (14 + Math.random() * 24) + "px";
+        document.body.appendChild(heart);
+    }
+
+    // No button dodge logic
+    const noBtn = document.getElementById("no");
+    const container = document.querySelector(".buttons");
+
+    noBtn.addEventListener("mouseenter", () => {
+        const containerRect = container.getBoundingClientRect();
+        const btnRect = noBtn.getBoundingClientRect();
+
+        const maxX = containerRect.width - btnRect.width;
+        const maxY = containerRect.height - btnRect.height;
+
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
+
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
+    });
+
+    // Confetti
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let confetti = [];
+
+    function createConfetti() {
+        for (let i = 0; i < 200; i++) {
+            confetti.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                r: Math.random() * 6 + 4,
+                d: Math.random() * 20,
+                color: `hsl(${Math.random()*360},100%,70%)`
+            });
+        }
+    }
+
+    function drawConfetti() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        confetti.forEach(c => {
+            ctx.beginPath();
+            ctx.arc(c.x, c.y, c.r, 0, Math.PI*2);
+            ctx.fillStyle = c.color;
+            ctx.fill();
+        });
+        updateConfetti();
+    }
+
+    function updateConfetti() {
+        confetti.forEach(c => {
+            c.y += Math.cos(c.d) + 4;
+            if (c.y > canvas.height) {
+                c.y = -10;
+                c.x = Math.random() * canvas.width;
+            }
+        });
+    }
+
+    function startConfetti() {
+        createConfetti();
+        setInterval(drawConfetti, 20);
+    }
+
+    document.getElementById("yes").addEventListener("click", () => {
+        document.getElementById("message").style.display = "block";
+        startConfetti();
+    });
+</script>
+
+</body>
+</html>
